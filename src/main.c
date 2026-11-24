@@ -701,6 +701,13 @@ static int host_main(void)
     printf("Loading XBE...\n");
     xbox_log_thread_role("guest-main", 0);
 
+#if defined(_WIN32)
+    /* The CPU renderer has no window unless the framebuffer presenter is on.
+     * Keep explicit headless overrides working. */
+    if (!recomp_env(RENV_FB_WINDOW) && !recomp_env_on(RENV_HEADLESS))
+        recomp_env_set(RENV_FB_WINDOW, "1");
+#endif
+
     /* Step 1: Crash diagnostics, before anything can fault */
     host_install_crash_handler();
 
